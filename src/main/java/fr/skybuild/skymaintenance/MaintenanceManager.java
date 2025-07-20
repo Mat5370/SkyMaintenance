@@ -8,6 +8,11 @@ import org.bukkit.entity.Player;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class MaintenanceManager implements CommandExecutor {
 
@@ -15,6 +20,23 @@ public class MaintenanceManager implements CommandExecutor {
     private boolean maintenanceActive = false;
     private Timer timer = null;
     private TimerTask currentTask = null;
+
+    private void logAction(String actor, String action, String detail) {
+        try {
+            File logFile = new File(plugin.getDataFolder(), "logs.txt");
+            FileWriter writer = new FileWriter(logFile, true);
+            String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+            writer.write("[" + timestamp + "] " + actor + " → " + action + (detail != null ? " (" + detail + ")" : "") + "\n");
+            writer.close();
+        } catch (IOException e) {
+            plugin.getLogger().warning("Impossible d'écrire dans logs.txt : " + e.getMessage());
+        }
+    }
+
+    private String getMessage(String key) {
+        return ChatColor.translateAlternateColorCodes('&',
+                plugin.getConfig().getString("messages." + key, "§c[SkyMaintenance] Message non défini : " + key));
+    }
 
     public MaintenanceManager(SkyMaintenance plugin) {
         this.plugin = plugin;
@@ -24,9 +46,16 @@ public class MaintenanceManager implements CommandExecutor {
         return maintenanceActive;
     }
 
-    public void startMaintenance(long durationMillis) {
+    public void startMaintenance(long durationMillis, CommandSender sender) {
         maintenanceActive = true;
-        Bukkit.broadcastMessage(ChatColor.RED + "Maintenance activée !");
+        sender.sendMessage(getMessage("maintenance.enabled.sender"));
+
+        Bukkit.getOnlinePlayers().forEach(p -> {
+            if (p instanceof Player && !p.equals(sender)) {
+                p.sendMessage(getMessage("maintenance.enabled.broadcast"));
+            }
+        });
+
         kickUnwhitelistedPlayers();
 
         if (durationMillis > 0) {
@@ -43,21 +72,36 @@ public class MaintenanceManager implements CommandExecutor {
         }
     }
 
-    public void stopMaintenance() {
+    public void stopMaintenance(CommandSender sender) {
         if (timer != null) {
             timer.cancel();
             timer = null;
         }
         currentTask = null;
         maintenanceActive = false;
-        Bukkit.broadcastMessage(ChatColor.GREEN + "Maintenance désactivée !");
+
+        sender.sendMessage(getMessage("maintenance.disabled.sender"));
+
+        Bukkit.getOnlinePlayers().forEach(p -> {
+            if (p instanceof Player && !p.equals(sender)) {
+                p.sendMessage(getMessage("maintenance.disabled.broadcast"));
+            }
+        });
+    }
+
+    public void stopMaintenance() {
+        currentTask = null;
+        maintenanceActive = false;
+
+        Bukkit.getOnlinePlayers().forEach(p -> {
+            p.sendMessage(getMessage("maintenance.disabled.broadcast"));
+        });
     }
 
     private void kickUnwhitelistedPlayers() {
         for (Player player : Bukkit.getOnlinePlayers()) {
             if (!player.hasPermission("maintenance.whitelist")) {
-                player.kickPlayer(ChatColor.RED + "🛠 Le serveur est en maintenance.\n" +
-                        ChatColor.GRAY + "Veuillez réessayer plus tard.");
+                player.kickPlayer(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("messages.maintenance.kick")));
             }
         }
     }
@@ -65,7 +109,7 @@ public class MaintenanceManager implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (args.length == 0) {
-            sender.sendMessage(ChatColor.YELLOW + "Utilisation: /maintenance <on|off|status> [durée ex: 5m, 30s]");
+            sender.sendMessage(getMessage("usage"));
             return true;
         }
 
@@ -74,12 +118,12 @@ public class MaintenanceManager implements CommandExecutor {
         switch (subCommand) {
             case "on":
                 if (!(sender instanceof ConsoleCommandSender) && !sender.hasPermission("maintenance.toggle")) {
-                    sender.sendMessage(ChatColor.RED + "⛔ Hey ! Tu n'as pas la permission d'utiliser cette commande.");
+                    sender.sendMessage(getMessage("no-permission.toggle"));
                     return true;
                 }
 
                 if (maintenanceActive) {
-                    sender.sendMessage(ChatColor.RED + "La maintenance est déjà activée.");
+                    sender.sendMessage(getMessage("already.enabled"));
                     return true;
                 }
 
@@ -88,46 +132,46 @@ public class MaintenanceManager implements CommandExecutor {
                     try {
                         duration = parseDuration(args[1]);
                     } catch (IllegalArgumentException e) {
-                        sender.sendMessage(ChatColor.RED + "Format de durée invalide. Ex: 5m, 30s, 1h");
+                        sender.sendMessage(getMessage("invalid.duration"));
                         return true;
                     }
                 }
 
-                startMaintenance(duration);
-                sender.sendMessage(ChatColor.GREEN + "✅ Maintenance activée.");
+                startMaintenance(duration, sender);
+                logAction(sender.getName(), "ACTIVATION", (duration > 0 ? (duration / 1000) + "s" : "indéterminée"));
                 break;
 
             case "off":
                 if (!(sender instanceof ConsoleCommandSender) && !sender.hasPermission("maintenance.toggle")) {
-                    sender.sendMessage(ChatColor.RED + "⛔ Hey ! Tu n'as pas la permission d'utiliser cette commande.");
+                    sender.sendMessage(getMessage("no-permission.toggle"));
                     return true;
                 }
 
                 if (!maintenanceActive) {
-                    sender.sendMessage(ChatColor.RED + "La maintenance n'est pas active.");
+                    sender.sendMessage(getMessage("already.disabled"));
                     return true;
                 }
 
-                stopMaintenance();
-                sender.sendMessage(ChatColor.GREEN + "✅ Maintenance désactivée.");
+                stopMaintenance(sender);
+                logAction(sender.getName(), "DÉSACTIVATION", null);
                 break;
 
             case "status":
                 if (!(sender instanceof ConsoleCommandSender) && !sender.hasPermission("maintenance.status")) {
-                    sender.sendMessage(ChatColor.RED + "🔴 Tu n'as pas la permission de consulter le statut de la maintenance.");
+                    sender.sendMessage(getMessage("no-permission.status"));
                     return true;
                 }
 
                 if (maintenanceActive) {
-                    sender.sendMessage(ChatColor.YELLOW + "🛠 Maintenance actuellement active.");
+                    sender.sendMessage(getMessage("status.active"));
                     sender.sendMessage(getRemainingTimeMessage());
                 } else {
-                    sender.sendMessage(ChatColor.GREEN + "✅ Le serveur n'est pas en maintenance.");
+                    sender.sendMessage(getMessage("status.inactive"));
                 }
                 break;
 
             default:
-                sender.sendMessage(ChatColor.YELLOW + "Utilisation: /maintenance <on|off|status> [durée]");
+                sender.sendMessage(getMessage("usage"));
                 break;
         }
 
@@ -148,17 +192,20 @@ public class MaintenanceManager implements CommandExecutor {
 
     public String getRemainingTimeMessage() {
         if (currentTask == null) {
-            return ChatColor.GRAY + "Durée : indéterminée.";
+            return ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("messages.duration.indeterminate", "&7Durée : indéterminée."));
         }
 
         long remaining = currentTask.scheduledExecutionTime() - System.currentTimeMillis();
         if (remaining <= 0) {
-            return ChatColor.GRAY + "Durée : indéterminée.";
+            return ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("messages.duration.indeterminate", "&7Durée : indéterminée."));
         }
 
         long minutes = TimeUnit.MILLISECONDS.toMinutes(remaining);
         long seconds = TimeUnit.MILLISECONDS.toSeconds(remaining) % 60;
 
-        return ChatColor.GRAY + "Durée restante : " + ChatColor.YELLOW + minutes + "m " + seconds + "s.";
+        return ChatColor.translateAlternateColorCodes('&',
+            plugin.getConfig().getString("messages.duration.remaining", "&7Durée restante : &e{minutes}m {seconds}s.")
+            .replace("{minutes}", String.valueOf(minutes))
+            .replace("{seconds}", String.valueOf(seconds)));
     }
 }

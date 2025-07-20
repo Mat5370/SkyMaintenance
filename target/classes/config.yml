@@ -1,0 +1,17 @@
+# SkyMaintenance - Configuration
+messages:
+  usage: "&eUtilisation: /maintenance <on|off|status> [durée ex: 5m, 30s]"
+  no-permission.toggle: "&c⛔ Tu n'as pas la permission pour activer/désactiver la maintenance."
+  no-permission.status: "&c⛔ Tu n'as pas la permission pour voir le statut."
+  invalid.duration: "&cFormat de durée invalide. Ex: 5m, 30s, 1h"
+  already.enabled: "&cLa maintenance est déjà activée."
+  already.disabled: "&cLa maintenance n'est pas active."
+  maintenance.enabled.sender: "&a✅ Maintenance activée avec succès."
+  maintenance.enabled.broadcast: "&c🛠 Maintenance activée !"
+  maintenance.disabled.sender: "&a✅ Maintenance désactivée."
+  maintenance.disabled.broadcast: "&a✅ Maintenance désactivée !"
+  maintenance.kick: "&c🛠 Le serveur est en maintenance.\n&7Veuillez réessayer plus tard."
+  status.active: "&e🛠 Maintenance actuellement active."
+  status.inactive: "&a✅ Le serveur n'est pas en maintenance."
+  duration.indeterminate: "&7Durée : indéterminée."
+  duration.remaining: "&7Durée restante : &e{minutes}m {seconds}s."

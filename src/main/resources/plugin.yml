@@ -1,5 +1,5 @@
 name: SkyMaintenance
-version: 0.1-SNAPSHOT
+version: 0.2-SNAPSHOT
 main: fr.skybuild.skymaintenance.SkyMaintenance
 api-version: 1.20
 

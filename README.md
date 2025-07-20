@@ -26,15 +26,18 @@ Il permet d’activer un mode maintenance sur le serveur, avec un système de ti
 /maintenance on [durée]   # Active la maintenance, optionnellement avec un timer
 /maintenance off          # Désactive la maintenance
 /maintenance status       # Affiche le statut actuel
-
+```
 
 🔐 Permissions
+```bash
 Permission	Description
 maintenance.toggle	Requise pour activer/désactiver
 maintenance.status	Voir l'état de la maintenance
 maintenance.whitelist	Exempte de l’expulsion automatique
+```
 
 🔄 Installation
+
 Téléchargez la dernière version depuis la section Releases
 
 Déposez le .jar dans le dossier /plugins de votre serveur

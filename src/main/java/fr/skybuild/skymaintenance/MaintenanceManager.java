@@ -64,18 +64,20 @@ public class MaintenanceManager implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!sender.hasPermission("maintenance.toggle")) {
-            sender.sendMessage(ChatColor.RED + "⛔ Hey ! Tu n'as pas la permission d'utiliser cette commande.");
-            return true;
-        }
-
         if (args.length == 0) {
-            sender.sendMessage(ChatColor.YELLOW + "Utilisation: /maintenance <on|off> [durée ex: 5m, 30s]");
+            sender.sendMessage(ChatColor.YELLOW + "Utilisation: /maintenance <on|off|status> [durée ex: 5m, 30s]");
             return true;
         }
 
-        switch (args[0].toLowerCase()) {
+        String subCommand = args[0].toLowerCase();
+
+        switch (subCommand) {
             case "on":
+                if (!(sender instanceof ConsoleCommandSender) && !sender.hasPermission("maintenance.toggle")) {
+                    sender.sendMessage(ChatColor.RED + "⛔ Hey ! Tu n'as pas la permission d'utiliser cette commande.");
+                    return true;
+                }
+
                 if (maintenanceActive) {
                     sender.sendMessage(ChatColor.RED + "La maintenance est déjà activée.");
                     return true;
@@ -92,20 +94,27 @@ public class MaintenanceManager implements CommandExecutor {
                 }
 
                 startMaintenance(duration);
+                sender.sendMessage(ChatColor.GREEN + "✅ Maintenance activée.");
                 break;
 
             case "off":
+                if (!(sender instanceof ConsoleCommandSender) && !sender.hasPermission("maintenance.toggle")) {
+                    sender.sendMessage(ChatColor.RED + "⛔ Hey ! Tu n'as pas la permission d'utiliser cette commande.");
+                    return true;
+                }
+
                 if (!maintenanceActive) {
                     sender.sendMessage(ChatColor.RED + "La maintenance n'est pas active.");
                     return true;
                 }
 
                 stopMaintenance();
+                sender.sendMessage(ChatColor.GREEN + "✅ Maintenance désactivée.");
                 break;
-            
+
             case "status":
-                if (!sender.hasPermission("maintenance.status")) {
-                    sender.sendMessage(ChatColor.RED + "⛔ Tu n'as pas la permission de consulter le statut de la maintenance.");
+                if (!(sender instanceof ConsoleCommandSender) && !sender.hasPermission("maintenance.status")) {
+                    sender.sendMessage(ChatColor.RED + "🔴 Tu n'as pas la permission de consulter le statut de la maintenance.");
                     return true;
                 }
 
@@ -118,7 +127,7 @@ public class MaintenanceManager implements CommandExecutor {
                 break;
 
             default:
-                sender.sendMessage(ChatColor.YELLOW + "Utilisation: /maintenance <on|off> [durée]");
+                sender.sendMessage(ChatColor.YELLOW + "Utilisation: /maintenance <on|off|status> [durée]");
                 break;
         }
 

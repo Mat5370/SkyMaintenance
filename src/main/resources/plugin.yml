@@ -2,15 +2,20 @@ name: SkyMaintenance
 version: 0.1-SNAPSHOT
 main: fr.skybuild.skymaintenance.SkyMaintenance
 api-version: 1.20
+
 commands:
   maintenance:
-    description: Active ou désactive la maintenance du serveur
-    usage: /maintenance <on|off> [durée]
+    description: Active, désactive ou affiche le statut de la maintenance
+    usage: /maintenance <on|off|status> [durée]
     permission: maintenance.toggle
+
 permissions:
   maintenance.toggle:
-    description: Permet d'activer/désactiver la maintenance
+    description: Permet d’activer ou désactiver la maintenance
     default: false
   maintenance.whitelist:
     description: Permet de rester connecté pendant la maintenance
+    default: false
+  maintenance.status:
+    description: Permet de voir le statut de la maintenance
     default: false

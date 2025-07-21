@@ -37,16 +37,11 @@ maintenance.whitelist	Exempte de l’expulsion automatique
 ```
 
 🔄 Installation
-
-Téléchargez la dernière version depuis la section Releases
-
-Déposez le .jar dans le dossier /plugins de votre serveur
-
-Redémarrez le serveur
-
-Modifiez config.yml si nécessaire pour personnaliser les messages
-
-(Optionnel) Utilisez /reload ou redémarrez pour appliquer les modifications
+1. Téléchargez la dernière version depuis la section Releases
+2. Déposez le .jar dans le dossier /plugins de votre serveur
+3. Redémarrez le serveur
+4. Modifiez config.yml si nécessaire pour personnaliser les messages
+5. (Optionnel) Utilisez /reload ou redémarrez pour appliquer les modifications
 
 🧪 Compatibilité
 ✅ Minecraft : 1.21.x (développé sur Paper 1.21.4)

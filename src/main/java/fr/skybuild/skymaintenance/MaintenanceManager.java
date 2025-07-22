@@ -13,6 +13,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import me.neznamy.tab.api.TabAPI;
+import me.neznamy.tab.api.TabPlayer;
+
 
 public class MaintenanceManager implements CommandExecutor {
 
@@ -58,6 +61,15 @@ public class MaintenanceManager implements CommandExecutor {
 
         kickUnwhitelistedPlayers();
 
+        if (plugin.getTabIntegrationManager() != null) {
+            Bukkit.getOnlinePlayers().forEach(p -> {
+                TabPlayer tabPlayer = TabAPI.getInstance().getPlayer(p.getUniqueId());
+                if (tabPlayer != null) {
+                    plugin.getTabIntegrationManager().applyToPlayer(tabPlayer);
+                }
+            });
+        }
+
         if (durationMillis > 0) {
             timer = new Timer();
             currentTask = new TimerTask() {
@@ -87,6 +99,15 @@ public class MaintenanceManager implements CommandExecutor {
                 p.sendMessage(getMessage("maintenance.disabled.broadcast"));
             }
         });
+
+        if (plugin.getTabIntegrationManager() != null) {
+            Bukkit.getOnlinePlayers().forEach(p -> {
+                TabPlayer tabPlayer = TabAPI.getInstance().getPlayer(p.getUniqueId());
+                if (tabPlayer != null) {
+                    plugin.getTabIntegrationManager().resetPlayer(tabPlayer);
+                }
+            });
+        }
     }
 
     public void stopMaintenance() {
@@ -96,6 +117,16 @@ public class MaintenanceManager implements CommandExecutor {
         Bukkit.getOnlinePlayers().forEach(p -> {
             p.sendMessage(getMessage("maintenance.disabled.broadcast"));
         });
+
+        if (plugin.getTabIntegrationManager() != null) {
+            Bukkit.getOnlinePlayers().forEach(p -> {
+                TabPlayer tabPlayer = TabAPI.getInstance().getPlayer(p.getUniqueId());
+                if (tabPlayer != null) {
+                    plugin.getTabIntegrationManager().resetPlayer(tabPlayer);
+                    plugin.getLogger().info("Maintenance désactivée automatiquement via timer.");
+                }
+            });
+        }
     }
 
     private void kickUnwhitelistedPlayers() {
@@ -167,6 +198,26 @@ public class MaintenanceManager implements CommandExecutor {
                     sender.sendMessage(getRemainingTimeMessage());
                 } else {
                     sender.sendMessage(getMessage("status.inactive"));
+                }
+                break;
+            
+            case "reload":
+                if (!(sender instanceof ConsoleCommandSender) && !sender.hasPermission("maintenance.toggle")) {
+                    sender.sendMessage(getMessage("no-permission.toggle"));
+                    return true;
+                }
+
+                plugin.reloadConfig();
+                sender.sendMessage(getMessage("config.reloaded"));
+
+                // Réappliquer TAB si maintenance active
+                if (plugin.getTabIntegrationManager() != null && plugin.getMaintenanceManager().isMaintenanceActive()) {
+                    Bukkit.getOnlinePlayers().forEach(p -> {
+                        TabPlayer tabPlayer = TabAPI.getInstance().getPlayer(p.getUniqueId());
+                        if (tabPlayer != null) {
+                            plugin.getTabIntegrationManager().applyToPlayer(tabPlayer);
+                        }
+                    });
                 }
                 break;
 

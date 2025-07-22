@@ -1,6 +1,6 @@
 # SkyMaintenance - Configuration
 messages:
-  usage: "&eUtilisation: /maintenance <on|off|status> [durée ex: 5m, 30s]"
+  usage: "&eUtilisation: /maintenance <on|off|status|reload> [durée ex: 5m, 30s]"
   no-permission.toggle: "&c⛔ Tu n'as pas la permission pour activer/désactiver la maintenance."
   no-permission.status: "&c⛔ Tu n'as pas la permission pour voir le statut."
   invalid.duration: "&cFormat de durée invalide. Ex: 5m, 30s, 1h"
@@ -15,3 +15,10 @@ messages:
   status.inactive: "&a✅ Le serveur n'est pas en maintenance."
   duration.indeterminate: "&7Durée : indéterminée."
   duration.remaining: "&7Durée restante : &e{minutes}m {seconds}s."
+  config.reloaded: "&a✅ Configuration rechargée avec succès."
+
+tab-integration:
+  enabled: true
+  header: "&c&l[MAINTENANCE]"
+  footer: "&7Le serveur est actuellement en maintenance."
+  suffix: "&c [MAINTENANCE]"

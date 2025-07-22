@@ -15,3 +15,10 @@ messages:
   status.inactive: "&a✅ Le serveur n'est pas en maintenance."
   duration.indeterminate: "&7Durée : indéterminée."
   duration.remaining: "&7Durée restante : &e{minutes}m {seconds}s."
+  config.reloaded: "&a✅ Configuration rechargée avec succès."
+
+tab-integration:
+  enabled: true
+  header: "&c&l[MAINTENANCE]"
+  footer: "&7Le serveur est actuellement en maintenance."
+  suffix: "&c [MAINTENANCE]"

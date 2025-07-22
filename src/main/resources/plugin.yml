@@ -1,12 +1,13 @@
 name: SkyMaintenance
-version: 0.2-SNAPSHOT
+version: 0.3-SNAPSHOT
 main: fr.skybuild.skymaintenance.SkyMaintenance
 api-version: 1.20
+softdepend: [TAB]
 
 commands:
   maintenance:
     description: Active, désactive ou affiche le statut de la maintenance
-    usage: /maintenance <on|off|status> [durée]
+    usage: /maintenance <on|off|status|reload> [durée]
     permission: maintenance.toggle
 
 permissions:
@@ -18,4 +19,7 @@ permissions:
     default: false
   maintenance.status:
     description: Permet de voir le statut de la maintenance
+    default: false
+  maintenance.reload:
+    description: Permet de recharger la configuration
     default: false

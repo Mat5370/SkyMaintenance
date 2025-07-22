@@ -1,4 +1,5 @@
-fr/skybuild/skymaintenance/MaintenanceManager.class
-fr/skybuild/skymaintenance/MaintenanceListener.class
+fr/skybuild/skymaintenance/TabIntegrationManager.class
 fr/skybuild/skymaintenance/MaintenanceManager$1.class
 fr/skybuild/skymaintenance/SkyMaintenance.class
+fr/skybuild/skymaintenance/MaintenanceManager.class
+fr/skybuild/skymaintenance/MaintenanceListener.class

@@ -1,6 +1,6 @@
-package fr.skybuild.skymaintenance;
+package fr.skybuild.skyutilities;
 
-import fr.skybuild.skymaintenance.TabIntegrationManager;
+import fr.skybuild.skyutilities.TabIntegrationManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -10,9 +10,9 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-public class SkyMaintenance extends JavaPlugin {
+public class SkyUtilities extends JavaPlugin {
 
-    private static SkyMaintenance instance;
+    private static SkyUtilities instance;
     private MaintenanceManager maintenanceManager;
     private TabIntegrationManager tabIntegrationManager;
 
@@ -47,7 +47,7 @@ public class SkyMaintenance extends JavaPlugin {
         // 6. Message de démarrage
         String version = getDescription().getVersion();
         Bukkit.getConsoleSender().sendMessage(ChatColor.DARK_AQUA + "   _____ __  ");
-        Bukkit.getConsoleSender().sendMessage(ChatColor.DARK_AQUA + "  / ___// /__ " + ChatColor.AQUA + "SkyMaintenance v" + version);
+        Bukkit.getConsoleSender().sendMessage(ChatColor.DARK_AQUA + "  / ___// /__ " + ChatColor.AQUA + "SkyUtilities v" + version);
         Bukkit.getConsoleSender().sendMessage(ChatColor.DARK_AQUA + "  \\__ \\/ / _ \\" + ChatColor.GRAY + " Running on " + Bukkit.getBukkitVersion());
         Bukkit.getConsoleSender().sendMessage(ChatColor.DARK_AQUA + " ___/ / /  __/");
         Bukkit.getConsoleSender().sendMessage(ChatColor.DARK_AQUA + "/____/_/\\___/ ");
@@ -56,10 +56,10 @@ public class SkyMaintenance extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        getLogger().info("SkyMaintenance désactivé !");
+        getLogger().info("SkyUtilities désactivé !");
     }
 
-    public static SkyMaintenance getInstance() {
+    public static SkyUtilities getInstance() {
         return instance;
     }
 
@@ -85,13 +85,13 @@ public class SkyMaintenance extends JavaPlugin {
         if (!readmeFile.exists()) {
             try (FileWriter writer = new FileWriter(readmeFile)) {
                 writer.write("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
-                writer.write("       SkyMaintenance - Plugin Bukkit\n");
+                writer.write("       SkyUtilities - Plugin Bukkit\n");
                 writer.write("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n");
                 writer.write("Développé par : Mat5370\n");
                 writer.write("Version : " + getDescription().getVersion() + "\n\n");
 
                 writer.write("📌 Description :\n");
-                writer.write("SkyMaintenance est un plugin léger et personnalisable permettant d’activer une période de maintenance sur votre serveur Minecraft (Paper, Spigot, Bukkit).\n");
+                writer.write("SkyUtilities est un plugin léger et personnalisable permettant d’activer une période de maintenance sur votre serveur Minecraft (Paper, Spigot, Bukkit).\n");
                 writer.write("Il permet de restreindre l’accès aux joueurs non autorisés pendant les opérations techniques ou les mises à jour.\n\n");
 
                 writer.write("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");

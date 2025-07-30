@@ -1,6 +1,6 @@
-name: SkyMaintenance
+name: SkyUtilities
 version: 0.3-SNAPSHOT
-main: fr.skybuild.skymaintenance.SkyMaintenance
+main: fr.skybuild.skyutilities.SkyUtilities
 api-version: 1.20
 softdepend: [TAB]
 
